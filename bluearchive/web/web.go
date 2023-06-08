@@ -1,3 +1,4 @@
+// Package web 插件网络请求
 package web
 
 import (
@@ -6,6 +7,10 @@ import (
 	"time"
 )
 
+// MakeRequest 用于获取网页信息，header自定义
+//
+// Client 超时时间为 30s
+// 如果请求回复码不为200，会至多重复请求 3 次
 func MakeRequest(url string, headers map[string]string) (*http.Response, error) {
 	cli := &http.Client{
 		Timeout: 30 * time.Second,
