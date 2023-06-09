@@ -25,37 +25,38 @@ var engine = control.Register("碧蓝档案", &ctrl.Options[*zero.Ctx]{
 func init() {
 	// 完全匹配触发
 	// 使用合并消息转发
-	engine.OnFullMatch(".ba活动").SetBlock(true).
-		Handle(func(ctx *zero.Ctx) {
-			w := wiki.NewWikiData()
-			if err := w.Request(); err != nil {
-				ctx.SendChain(message.Reply(ctx.Event.MessageID), message.Text("ERROR: 请求错误"))
-				return
-			}
+	engine.OnFullMatch(".ba活动").SetBlock(true).Handle(send("event"))
+	engine.OnFullMatch(".ba公告").SetBlock(true).Handle(send("announce"))
+}
+
+func send(mode string) zero.Handler {
+	return func(ctx *zero.Ctx) {
+		w := wiki.NewWikiData()
+		if err := w.Request(); err != nil {
+			ctx.SendChain(message.Reply(ctx.Event.MessageID), message.Text("ERROR: 请求错误"))
+			return
+		}
+		var msgStringSlice []string
+		var msg message.Message
+		switch mode {
+		case "event":
 			layout := "1月02日 15:04"
-			msg := make(message.Message, 0, len(*w.Events))
-			eventmsg := w.Events.PrintEvent(layout)
-			for _, sendmsg := range eventmsg {
-				msg = append(msg, ctxext.FakeSenderForwardNode(ctx, utils.Txt2Img(ctx, sendmsg)))
-			}
-			if id := ctx.Send(msg).ID(); id == 0 {
-				ctx.SendChain(message.Text("ERROR: 可能被风控了"))
-			}
-		})
-	engine.OnFullMatch(".ba公告").SetBlock(true).
-		Handle(func(ctx *zero.Ctx) {
-			w := wiki.NewWikiData()
-			if err := w.Request(); err != nil {
-				ctx.SendChain(message.Reply(ctx.Event.MessageID), message.Text("ERROR: 请求错误"))
-				return
-			}
-			msg := make(message.Message, 0, len(*w.Announcements))
-			announce := w.Announcements.PrintAnnouncements()
-			for _, sendmsg := range announce {
-				msg = append(msg, ctxext.FakeSenderForwardNode(ctx, utils.Txt2Img(ctx, sendmsg)))
-			}
-			if id := ctx.Send(msg).ID(); id == 0 {
-				ctx.SendChain(message.Text("ERROR: 可能被风控了"))
-			}
-		})
+			msg = make(message.Message, 0, len(*w.Events))
+			msgStringSlice = w.Events.PrintEvent(layout)
+
+		case "announce":
+			msg = make(message.Message, 0, len(*w.Announcements))
+			msgStringSlice = w.Announcements.PrintAnnouncements()
+
+		default:
+			return
+		}
+
+		for _, sendmsg := range msgStringSlice {
+			msg = append(msg, ctxext.FakeSenderForwardNode(ctx, utils.Txt2Img(ctx, sendmsg)))
+		}
+		if id := ctx.Send(msg).ID(); id == 0 {
+			ctx.SendChain(message.Text("ERROR: 可能被风控了"))
+		}
+	}
 }
