@@ -1,3 +1,4 @@
+// Package announce 从wiki获取游戏公告
 package announce
 
 import (

@@ -1,3 +1,4 @@
+// Package event 从wiki获取游戏活动
 package event
 
 import (
