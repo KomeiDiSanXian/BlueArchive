@@ -1,3 +1,4 @@
+// Package picture wiki图片相关
 package picture
 
 import (
