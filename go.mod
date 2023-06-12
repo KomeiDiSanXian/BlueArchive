@@ -8,6 +8,11 @@ require (
 )
 
 require (
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/mattn/go-sqlite3 v1.14.15 // indirect
+)
+
+require (
 	github.com/Coloured-glaze/gg v1.3.4 // indirect
 	github.com/FloatTech/floatbox v0.0.0-20230111053652-a03d6334fadf // indirect
 	github.com/FloatTech/rendercard v0.0.3 // indirect
@@ -24,6 +29,7 @@ require (
 	github.com/fumiama/gofastTEA v0.0.10 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/jinzhu/gorm v1.9.16
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
