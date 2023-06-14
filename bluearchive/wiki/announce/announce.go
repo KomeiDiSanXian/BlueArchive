@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/KomeiDiSanXian/BlueArchive/bluearchive/wiki/picture"
 	"github.com/tidwall/gjson"
+
+	"github.com/KomeiDiSanXian/BlueArchive/bluearchive/wiki/picture"
 )
 
 // Announcement 公告

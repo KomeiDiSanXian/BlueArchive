@@ -3,6 +3,7 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 
 	"github.com/FloatTech/zbputils/img/text"
@@ -21,8 +22,10 @@ func Txt2Img(ctx *zero.Ctx, txt string) message.MessageSegment {
 	return message.Image("base64://" + helper.BytesToString(data))
 }
 
-// L11nJSON 本地化json
-func L11nJSON(l11nJSONPath, toBeTranslatedJSONPath string) ([]byte, error) {
+// L11nJSON 读取json 并使用l11nJSONPath 来对toBeTranslatedJSONPath l11n
+//
+// 返回值的第一个键是key, 嵌套的map[string]interface为json Objects
+func L11nJSON(l11nJSONPath, toBeTranslatedJSONPath, key string) (map[string]map[string]interface{}, error) {
 	// 读取本地化json
 	l11nBytes, err := ReadJSONFile(l11nJSONPath)
 	if err != nil {
@@ -76,10 +79,26 @@ func L11nJSON(l11nJSONPath, toBeTranslatedJSONPath string) ([]byte, error) {
 			}
 		}
 	}
-	return json.Marshal(transJSON)
+	return convertArraytoMap(transJSON, key)
 }
 
-// ReadJSONFile 从data中读取 json
+// ReadJSONFile 从data 中读取json
 func ReadJSONFile(path string) ([]byte, error) {
 	return os.ReadFile(path)
+}
+
+// return map[name]map[key]value
+func convertArraytoMap(jsonMapSilce []map[string]interface{}, key string) (map[string]map[string]interface{}, error) {
+	if jsonMapSilce == nil {
+		return nil, errors.New("nil json array")
+	}
+	result := make(map[string]map[string]interface{})
+	// 遍历切片建立键值对
+	for _, jsonMap := range jsonMapSilce {
+		name, ok := jsonMap[key].(string)
+		if ok {
+			result[name] = jsonMap
+		}
+	}
+	return result, nil
 }
